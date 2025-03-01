@@ -188,6 +188,140 @@ summary.departement <- function(x) {
 }
 
 
+#' Plotter les codes socio-professionnels des élus dans une commune
+#'
+#' Cette fonction génère un graphique à barres horizontales représentant le nombre d'élus
+#' par code socio-professionnel dans une commune donnée. Elle est conçue pour être utilisée
+#' avec des objets de type `commune`.
+#'
+#' @param x Un data frame de type `commune` contenant les informations sur les élus d'une commune.
+#' Ce data frame doit contenir les colonnes suivantes :
+#' - `Libellé de la commune` : Nom de la commune
+#' - `Libellé du département` : Nom du département
+#' - `Code de la catégorie socio-professionnelle` : Code identifiant la catégorie socio-professionnelle de chaque élu
+#'
+#' @return Un graphique de type `ggplot` (bar chart horizontal) affichant le nombre d'élus
+#' par code socio-professionnel dans la commune.
+#' Le graphique inclut un titre, les axes x et y, et est stylisé avec le thème minimal de ggplot2.
+#'
+#' @import ggplot2
+#' @export
+#'
+#' @examples
+#' data_commune <- data.frame(
+#'   `Libellé de la commune` = rep("Commune A", 10),
+#'   `Libellé du département` = rep("Département 1", 10),
+#'   `Code de la catégorie socio-professionnelle` = c("Prof1", "Prof2", "Prof2", "Prof1", "Prof3", "Prof1", "Prof2", "Prof1", "Prof3", "Prof2")
+#' )
+#' plot.commune(data_commune)
+plot.commune <- function(x) {
+  # Vérifiez que l'objet est de type commune
+  if (!inherits(x, "commune")) {
+    stop("L'objet doit être de type 'commune'")
+  }
+
+  # Vérifiez que les colonnes nécessaires existent
+  if (!all(c("Libellé de la commune", "Libellé du département", "Code de la catégorie socio-professionnelle") %in% colnames(x))) {
+    stop("Le data.frame doit contenir les colonnes 'Libellé de la commune', 'Libellé du département', et 'Code de la catégorie socio-professionnelle'")
+  }
+
+  # Nom de la commune et du département
+  nom_commune <- unique(x$`Libellé de la commune`)
+  nom_departement <- unique(x$`Libellé du département`)
+
+  # Nombre d'élu.e.s de la commune
+  nombre_elus <- nrow(x)
+
+  # Titre du graphique
+  titre_graphique <- paste(nom_commune, "-", nom_departement)
+
+  # Compter le nombre d'élus par code socio-professionnel
+  code_count <- table(x$`Code de la catégorie socio-professionnelle`)
+
+  # Convertir en data.frame pour ggplot2
+  df_code_count <- as.data.frame(code_count)
+  colnames(df_code_count) <- c("Code socio-professionnel", "Nombre d'élus")
+
+  # Création d'un bar chart horizontal avec ggplot2
+  ggplot(df_code_count, aes(x = reorder(`Code socio-professionnel`, `Nombre d'élus`), y = `Nombre d'élus`)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    labs(
+      title = titre_graphique,
+      x = paste("Libellés des codes professionnels pour les élus (", nombre_elus, " élus)", sep = ""),
+      y = "Nombre d'élus"
+    ) +
+    theme_minimal()
+}
+
+
+#' Plotter les codes socio-professionnels des élus dans un département
+#'
+#' Cette fonction génère un graphique à barres horizontales représentant les 10 codes socio-professionnels
+#' les plus représentés parmi les élus d'un département donné. Elle est conçue pour être utilisée avec des objets
+#' de type `departement`.
+#'
+#' @param x Un data frame de type `departement` contenant les informations sur les élus d'un département.
+#' Ce data frame doit contenir les colonnes suivantes :
+#' - `Libellé du département` : Nom du département
+#' - `Libellé de la commune` : Nom de la commune
+#' - `Code de la catégorie socio-professionnelle` : Code identifiant la catégorie socio-professionnelle de chaque élu
+#'
+#' @return Un graphique de type `ggplot` (bar chart horizontal) affichant les 10 codes socio-professionnels
+#' les plus représentés parmi les élus dans le département.
+#' Le graphique inclut un titre, les axes x et y, et est stylisé avec le thème minimal de ggplot2.
+#'
+#' @import ggplot2
+#' @export
+#'
+#' @examples
+#' data_departement <- data.frame(
+#'   `Libellé du département` = rep("Département 1", 20),
+#'   `Libellé de la commune` = rep("Commune A", 20),
+#'   `Code de la catégorie socio-professionnelle` = c("Prof1", "Prof2", "Prof2", "Prof1", "Prof3", "Prof1", "Prof2", "Prof1", "Prof3", "Prof2",
+#'                                                  "Prof1", "Prof3", "Prof1", "Prof1", "Prof2", "Prof1", "Prof3", "Prof2", "Prof1", "Prof3")
+#' )
+#' plot.departement(data_departement)
+plot.departement <- function(x) {
+  # Vérifiez que l'objet est de type departement
+  if (!inherits(x, "departement")) {
+    stop("L'objet doit être de type 'departement'")
+  }
+
+  # Vérifiez que les colonnes nécessaires existent
+  if (!all(c("Libellé du département", "Libellé de la commune", "Code de la catégorie socio-professionnelle") %in% colnames(x))) {
+    stop("Le data.frame doit contenir les colonnes 'Libellé du département', 'Libellé de la commune', et 'Code de la catégorie socio-professionnelle'")
+  }
+
+  # Nom du département et nombre de communes
+  nom_departement <- unique(x$`Libellé du département`)
+  nombre_communes <- length(unique(x$`Libellé de la commune`))
+
+  # Compter le nombre d'élus pour chaque code socio-professionnel
+  code_count <- table(x$`Code de la catégorie socio-professionnelle`)
+  top10_code_count <- sort(code_count, decreasing = TRUE)[1:10]
+
+  # Convertir en data.frame pour ggplot2
+  df_top10_code_count <- as.data.frame(top10_code_count)
+  colnames(df_top10_code_count) <- c("Code socio-professionnel", "Nombre d'élus")
+
+  # Titre du graphique
+  titre_graphique <- paste(nom_departement, "-", nombre_communes, "communes")
+
+  # Création d'un bar chart horizontal avec ggplot2
+  ggplot(df_top10_code_count, aes(x = reorder(`Code socio-professionnel`, `Nombre d'élus`), y = `Nombre d'élus`)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    labs(
+      title = titre_graphique,
+      x = paste("Libellés des 10 codes professionnels les plus représentés pour le département ", nom_departement),
+      y = "Nombre d'élus"
+    ) +
+    theme_minimal()
+}
+
+
+
 
 library(readr)
 elus_sample <- read_delim("elus_sample.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
