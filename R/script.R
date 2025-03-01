@@ -231,4 +231,23 @@ use_data(elus_sample)
 #' summary(elus_sample)
 "elus_sample"
 
+#Tests unitaires pour les fonctions
+
+library(testthat)
+
+#Tests pour compter_nombre_d_adjoints()
+
+test_that("compter_nombre_d_adjoints fonctionne correctement", {
+  # Test 1 : Vérifier si la fonction renvoie un nombre entier
+  data <- data.frame(
+    `Libellé de la fonction` = c("Adjoint au Maire", "Maire", "Adjoint au Maire", "Conseiller")
+  )
+  expect_equal(compter_nombre_d_adjoints(data), 2)
+
+  # Test 2 : Vérifier si la fonction gère les NA dans les données
+  data_na <- data.frame(
+    `Libellé de la fonction` = c("Adjoint au Maire", NA, "Adjoint au Maire", "Conseiller")
+  )
+  expect_equal(compter_nombre_d_adjoints(data_na), 2)
+})
 
