@@ -9,6 +9,7 @@
 #' @dependencies
 #' - Aucun package externe requis.
 compter_nombre_d_adjoints <- function(data) {
+  # On recherche les occurrences de "adjoint au Maire" dans la colonne 'Libellé de la fonction'
   nombre_adjoints <- sum(grepl("adjoint au Maire", data$`Libellé de la fonction`, ignore.case = TRUE), na.rm = TRUE)
   return(nombre_adjoints)
 }
@@ -385,12 +386,26 @@ test_that("compter_nombre_d_adjoints renvoie un nombre entier", {
   expect_type(result, "integer") # Vérifie que le résultat est bien un entier
 })
 
-test_that("compter_nombre_d_adjoints compte correctement les adjoints", {
-  # Créer un échantillon de test avec des adjoints
-  elus_test <- data.frame(
-    `Libellé de la fonction` = c("Adjoint au Maire", "Maire", "Adjoint au Maire", "Conseiller")
-  )
 
+# Créer un échantillon de données
+elus_test <- data.frame(
+  `Libellé.de.la.fonction` = c("Adjoint au Maire", "Maire", "Adjoint au Maire", "Conseiller")
+)
+
+# Renommer la colonne pour faciliter l'accès
+colnames(elus_test)[colnames(elus_test) == "Libellé.de.la.fonction"] <- "Libellé de la fonction"
+
+# Afficher les valeurs uniques de la colonne 'Libellé de la fonction'
+print(unique(elus_test$`Libellé de la fonction`))
+
+# Définir la fonction pour compter les adjoints
+compter_nombre_d_adjoints <- function(data) {
+  nombre_adjoints <- sum(grepl("adjoint au Maire", data$`Libellé de la fonction`, ignore.case = TRUE), na.rm = TRUE)
+  return(nombre_adjoints)
+}
+
+# Test pour vérifier si la fonction compte correctement les adjoints
+test_that("compter_nombre_d_adjoints compte correctement les adjoints", {
   result <- compter_nombre_d_adjoints(elus_test)
   expect_equal(result, 2) # Vérifie qu'on trouve bien 2 adjoints
 })
@@ -592,8 +607,11 @@ test_that("summary.commune calcule le nombre d'élus", {
  })
 
 
+ if (file.exists("data/elus_sample.rda")) {
+   unlink("data/elus_sample.rda")
+ }
 
-
+devtools::load_all()
 
 
 
