@@ -186,3 +186,49 @@ summary.departement <- function(x) {
   elu_plus_jeune <- x[which.min(x$age), ]
   nom_elu_plus_jeune <- paste(elu_plus_jeune$`Nom de l'élu`, elu_plus_jeune$`Prénom`)
 }
+
+
+
+library(readr)
+elus_sample <- read_delim("elus_sample.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+library(usethis)
+
+use_data(elus_sample)
+
+#' @title Jeu de données des élus
+#'
+#' @description
+#' Le jeu de données `elus_sample` contient des informations sur les élus dans différentes collectivités, incluant des détails sur leur fonction, leur catégorie socio-professionnelle, leur sexe, et d'autres caractéristiques démographiques et administratives.
+#'
+#' @format Un data frame avec 9752 lignes et 16 colonnes. Chaque ligne représente un élu et chaque colonne contient une caractéristique de l'élu.
+#' \describe{
+#'   \item{Code du département}{Le code du département auquel l'élu appartient.}
+#'   \item{Libellé du département}{Le nom du département auquel l'élu appartient.}
+#'   \item{Code de la collectivité à statut particulier}{Le code de la collectivité à statut particulier si applicable.}
+#'   \item{Libellé de la collectivité à statut particulier}{Le nom de la collectivité à statut particulier si applicable.}
+#'   \item{Code de la commune}{Le code de la commune de l'élu.}
+#'   \item{Libellé de la commune}{Le nom de la commune de l'élu.}
+#'   \item{Nom de l'élu}{Le nom de l'élu.}
+#'   \item{Prénom de l'élu}{Le prénom de l'élu.}
+#'   \item{Code sexe}{Le code correspondant au sexe de l'élu.}
+#'   \item{Date de naissance}{La date de naissance de l'élu au format JJ/MM/AAAA.}
+#'   \item{Code de la catégorie socio-professionnelle}{Le code de la catégorie socio-professionnelle de l'élu.}
+#'   \item{Libellé de la catégorie socio-professionnelle}{Le nom de la catégorie socio-professionnelle de l'élu.}
+#'   \item{Date de début du mandat}{La date à laquelle l'élu a commencé son mandat.}
+#'   \item{Libellé de la fonction}{La fonction exercée par l'élu (par exemple, maire, adjoint au Maire).}
+#'   \item{Date de début de la fonction}{La date à laquelle l'élu a commencé sa fonction.}
+#'   \item{Code nationalité}{Le code de la nationalité de l'élu.}
+#' }
+#'
+#' @source Source des données : [indique la source si disponible, par exemple, une base de données publique, un fichier CSV, etc.]
+#'
+#' @usage data("elus_sample")
+#'
+#' @examples
+#' data("elus_sample")
+#' head(elus_sample)
+#' summary(elus_sample)
+"elus_sample"
+
+
